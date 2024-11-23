@@ -1,9 +1,12 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import za.co.mjjacobs.noted.*
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.composeCompiler)
 }
 
 kotlin {
@@ -14,22 +17,38 @@ kotlin {
         }
     }
     
-    jvm()
+    jvm("server")
     
     sourceSets {
+        val serverMain by getting
+        
         commonMain.dependencies {
             // put your Multiplatform dependencies here
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material3)
+            implementation(compose.ui)
+            implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
+            implementation(libs.androidx.lifecycle.viewmodel)
+            implementation(libs.androidx.lifecycle.runtime.compose)
+        }
+        
+        serverMain.dependencies {
+            //  put your Server dependencies here
         }
     }
 }
 
 android {
-    namespace = "za.co.mjjacobs.noted.shared"
+    namespace = Constants.sharedNameSpace
     compileSdk = libs.versions.android.compileSdk.get().toInt()
+    
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = Constants.javaVersion
+        targetCompatibility = Constants.javaVersion
     }
+    
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
     }
